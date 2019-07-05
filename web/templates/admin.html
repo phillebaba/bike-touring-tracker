@@ -1,0 +1,31 @@
+{{ define "content" }}
+<div class="">
+
+  <div class="d-flex flex-row justify-content-between">
+    <h2>Checkins</h2>
+    <a href="/admin/checkin" class="btn btn-primary">Add</a>
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Time</th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {{ range .Checkins }}
+      <tr>
+        <td>{{ .TimeSinceFormatted }}</td>
+        <td>{{ .Name }}</td>
+        <td>
+          <form action="/admin/checkin/delete/{{ .ID }}" method="post">
+            <button class="btn" type="submit"><i class="fas fa-trash"></i></button>
+          </form>
+        </td>
+      </tr>
+      {{ end }}
+    </tbody>
+ </table>
+</div>
+{{ end }}

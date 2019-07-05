@@ -1,0 +1,40 @@
+body  {
+  min-height:100%;
+	margin: 0;
+}
+
+.center {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.main {
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+}
+
+.map {
+  height: 100%;
+	width: 100%;
+}
+
+.details {
+	display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display flex;
+  justify-content: flex-start;
+  flex-direction: column;
+
+  width: 400px;
+  padding: 10px 10px;
+  background: #f8f9fc;
+}
+
+.card {
+  margin: 0 0 20px 0;
+}

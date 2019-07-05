@@ -1,0 +1,84 @@
+{{ define "content" }}
+<div class="main">
+  <div id="mapid" class="map"></div>
+
+  <div class="details">
+    <h3>{{.Trip.Name}}</h3>
+
+    {{ if .Trip.Ongoing }}
+      <h4>Stats</h4>
+      <div class="card">
+        <div class="card-header">Total distance (bee line)</div>
+        <div class="card-body">
+          <p class="card-text">{{ .Trip.BeeLineDistanceFormatted }}</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">Current trip duration</div>
+        <div class="card-body">
+          <p class="card-text">{{ .Trip.ActiveTimeFormatted }}</p>
+        </div>
+      </div>
+
+      <h4>Checkins</h4>
+      {{range .Trip.Checkins}}
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{ .Name }}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">{{ .TimeSinceFormatted }}</h6>
+          <p class="card-text">{{ .Description }}</p>
+        </div>
+      </div>
+      {{ end }}
+    {{ else }}
+      <h5>This trip has not been started yet<h5>
+    {{ end }}
+  </div>
+
+</div>
+
+<script>
+  var map = L.map('mapid').setView([57.609581, 14.243360], 8);
+
+  L.tileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+  }).addTo(map);
+
+  {{range .Trip.Checkins}}
+    L.circle([{{.Lat}}, {{.Lng}}], {
+        color: 'red',
+        fillColor: '#f03',
+        fillOpacity: 0.5,
+      radius: {{ .Radius }}
+    }).addTo(map);
+  {{end}}
+
+  var greenIcon = L.icon({
+        iconUrl: 'static/assets/flag-green.png',
+        iconSize:     [32, 32], // size of the icon
+        iconAnchor:   [0, 32], // point of the icon which will correspond to marker's location
+  });
+
+  var yellowIcon = L.icon({
+        iconUrl: 'static/assets/flag-yellow.png',
+        iconSize:     [32, 32], // size of the icon
+        iconAnchor:   [0, 32], // point of the icon which will correspond to marker's location
+  });
+
+  var redIcon = L.icon({
+        iconUrl: 'static/assets/flag-red.png',
+        iconSize:     [32, 32], // size of the icon
+        iconAnchor:   [0, 32], // point of the icon which will correspond to marker's location
+  });
+
+  {{range .Trip.Checkpoints}}
+    {{ if $.Trip.IsFirst . }}
+      L.marker([{{.Lat}}, {{.Lng}}], {icon: greenIcon}).addTo(map);
+    {{ else if $.Trip.IsLast . }}
+      L.marker([{{.Lat}}, {{.Lng}}], {icon: redIcon}).addTo(map);
+    {{ else }}
+      L.marker([{{.Lat}}, {{.Lng}}], {icon: yellowIcon}).addTo(map);
+    {{ end }}
+  {{end}}
+</script>
+{{ end }}
