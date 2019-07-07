@@ -10,7 +10,6 @@ jobs:
     script:
     - go get golang.org/x/lint/golint
     - golint
-  - script: go test -v
 
   - stage: release
     services: docker
