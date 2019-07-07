@@ -21,4 +21,5 @@ jobs:
     - make install
     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     - docker run --rm --privileged multiarch/qemu-user-static:register
-    - bin/buildx build -t phillebaba/bike-tracker  -o type=registry --platform=linux/arm/v7 ..
+    - bin/buildx build --platform=linux/arm/v7 --push -t phillebaba/bike-tracker ..
+
