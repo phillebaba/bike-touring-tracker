@@ -2,15 +2,13 @@ sudo: true
 language: go
 stages:
 - test
-- name: release
-  if: tag IS present
+- release
 jobs:
   include:
   - stage: test
     script:
     - go get golang.org/x/lint/golint
     - golint
-  - script: go test -v
   - stage: release
     env:
     - DOCKER_USERNAME=phillebaba
