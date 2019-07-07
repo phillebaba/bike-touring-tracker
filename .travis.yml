@@ -13,18 +13,17 @@ jobs:
 
   - stage: release
     services: docker
+    env:
+      - TRAVIS_TAG=1.0.0
     script:
     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     - docker run --rm --privileged multiarch/qemu-user-static:register
     - env GOOS=linux GOARCH=amd64 go build -o test-web-server-amd64 cmd/server/main.go
     - env GOOS=linux GOARCH=arm go build -o test-web-server-arm cmd/server/main.go
     - env GOOS=linux GOARCH=arm64 go build -o test-web-server-arm64 cmd/server/main.go
-    - docker build --build-arg ARCH=amd64 -t $DOCKER_USERNAME/bikebike-touring-trackerr:${TRAVIS_TAG}-linux-amd64 -f
-      ./Dockerfile .
-    - docker build --build-arg ARCH=arm64 -t $DOCKER_USERNAME/test-web-server:${TRAVIS_TAG}-linux-arm -f
-      ./Dockerfile .
-    - docker build --build-arg ARCH=arm -t $DOCKER_USERNAME/test-web-server:${TRAVIS_TAG}-linux-arm64 -f
-      ./Dockerfile .
+    - docker build --build-arg ARCH=amd64 -t $DOCKER_USERNAME/bike-touring-tracker:${TRAVIS_TAG}-linux-amd64 .
+    - docker build --build-arg ARCH=arm64 -t $DOCKER_USERNAME/test-web-server:${TRAVIS_TAG}-linux-arm .
+    - docker build --build-arg ARCH=arm -t $DOCKER_USERNAME/test-web-server:${TRAVIS_TAG}-linux-arm64 .
     - docker push $DOCKER_USERNAME/test-web-server:${TRAVIS_TAG}-linux-amd64
     - docker push $DOCKER_USERNAME/test-web-server:${TRAVIS_TAG}-linux-arm
     - docker push $DOCKER_USERNAME/test-web-server:${TRAVIS_TAG}-linux-arm64
