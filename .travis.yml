@@ -1,14 +1,5 @@
 sudo: true
 language: go
-
-before_install:
-  - docker --version
-  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-  - sudo apt-get update
-  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
-  - docker --version
-
 stages:
 - test
 - release
@@ -19,15 +10,27 @@ jobs:
     script:
     - go get golang.org/x/lint/golint
     - golint
+  - script: go test -v
+
   - stage: release
-    env:
-    - DOCKER_USERNAME=phillebaba
     services: docker
     script:
-    - git clone git://github.com/docker/buildx
-    - cd buildx
-    - make install
     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     - docker run --rm --privileged multiarch/qemu-user-static:register
-    - bin/buildx build --platform=linux/arm/v7 --push -t phillebaba/bike-tracker ..
-
+    - env GOOS=linux GOARCH=amd64 go build -o test-web-server-amd64
+    - env GOOS=linux GOARCH=arm go build -o test-web-server-arm
+    - env GOOS=linux GOARCH=arm64 go build -o test-web-server-arm64
+    - docker build --build-arg ARCH=amd64 -t $DOCKER_USERNAME/bikebike-touring-trackerr:${TRAVIS_TAG}-linux-amd64 -f
+      ./Dockerfile .
+    - docker build --build-arg ARCH=arm64 -t $DOCKER_USERNAME/test-web-server:${TRAVIS_TAG}-linux-arm -f
+      ./Dockerfile .
+    - docker build --build-arg ARCH=arm -t $DOCKER_USERNAME/test-web-server:${TRAVIS_TAG}-linux-arm64 -f
+      ./Dockerfile .
+    - docker push $DOCKER_USERNAME/test-web-server:${TRAVIS_TAG}-linux-amd64
+    - docker push $DOCKER_USERNAME/test-web-server:${TRAVIS_TAG}-linux-arm
+    - docker push $DOCKER_USERNAME/test-web-server:${TRAVIS_TAG}-linux-arm64
+    - wget https://github.com/estesp/manifest-tool/releases/download/v0.6.0/manifest-tool-linux-amd64
+    - mv manifest-tool-linux-amd64 manifest-tool
+    - chmod +x manifest-tool
+    - ./manifest-tool push from-args --platforms linux/amd64,linux/arm,linux/arm64
+      --template "phillebaba/test-web-server:${TRAVIS_TAG}-OS-ARCH" --target "phillebaba/test-web-server:${TRAVIS_TAG}"
