@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/thinkerou/favicon"
 
-	"github.com/phillebaba/bike-tracker/pkg/domain"
+	"github.com/phillebaba/bike-touring-tracker/pkg/domain"
 )
 
 func Run(serviceContext domain.ServiceContext) {

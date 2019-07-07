@@ -6,7 +6,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 
-	"github.com/phillebaba/bike-tracker/pkg/domain"
+	"github.com/phillebaba/bike-touring-tracker/pkg/domain"
 )
 
 func Init() domain.ServiceContext {

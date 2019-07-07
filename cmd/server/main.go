@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/phillebaba/bike-tracker/pkg/domain"
-	"github.com/phillebaba/bike-tracker/pkg/http"
-	"github.com/phillebaba/bike-tracker/pkg/postgres"
+	"github.com/phillebaba/bike-touring-tracker/pkg/domain"
+	"github.com/phillebaba/bike-touring-tracker/pkg/http"
+	"github.com/phillebaba/bike-touring-tracker/pkg/postgres"
 )
 
 func main() {

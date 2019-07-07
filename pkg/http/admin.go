@@ -9,7 +9,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 
-	"github.com/phillebaba/bike-tracker/pkg/domain"
+	"github.com/phillebaba/bike-touring-tracker/pkg/domain"
 )
 
 type AdminHandler struct {

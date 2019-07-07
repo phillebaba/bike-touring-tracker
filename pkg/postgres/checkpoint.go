@@ -3,7 +3,7 @@ package postgres
 import (
 	"github.com/jinzhu/gorm"
 
-	"github.com/phillebaba/bike-tracker/pkg/domain"
+	"github.com/phillebaba/bike-touring-tracker/pkg/domain"
 )
 
 type CheckpointService struct {
