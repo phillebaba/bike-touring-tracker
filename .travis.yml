@@ -18,16 +18,20 @@ jobs:
     script:
     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     - docker run --rm --privileged multiarch/qemu-user-static:register
+
     - env GOOS=linux GOARCH=amd64 go build -o bike-touring-tracker-amd64 cmd/server/main.go
-    - env GOOS=linux GOARCH=arm go build -o bike-touring-tracker-arm cmd/server/main.go
     - env GOOS=linux GOARCH=arm64 go build -o bike-touring-tracker-arm64 cmd/server/main.go
+    - env GOOS=linux GOARCH=arm go build -o bike-touring-tracker-arm cmd/server/main.go
+
     - docker build --build-arg ARCH=amd64 -t $DOCKER_USERNAME/bike-touring-tracker:${TRAVIS_TAG}-linux-amd64 .
-    - docker build --build-arg ARCH=arm64 -t $DOCKER_USERNAME/bike-touring-tracker:${TRAVIS_TAG}-linux-arm .
-    - docker build --build-arg ARCH=arm -t $DOCKER_USERNAME/bike-touring-tracker:${TRAVIS_TAG}-linux-arm64 .
+    - docker build --build-arg ARCH=arm64 -t $DOCKER_USERNAME/bike-touring-tracker:${TRAVIS_TAG}-linux-arm64 .
+    - docker build --build-arg ARCH=arm -t $DOCKER_USERNAME/bike-touring-tracker:${TRAVIS_TAG}-linux-arm .
+
     - docker push $DOCKER_USERNAME/bike-touring-tracker:${TRAVIS_TAG}-linux-amd64
-    - docker push $DOCKER_USERNAME/bike-touring-tracker:${TRAVIS_TAG}-linux-arm
     - docker push $DOCKER_USERNAME/bike-touring-tracker:${TRAVIS_TAG}-linux-arm64
-    - wget https://github.com/estesp/manifest-tool/releases/download/v0.6.0/manifest-tool-linux-amd64
+    - docker push $DOCKER_USERNAME/bike-touring-tracker:${TRAVIS_TAG}-linux-arm
+
+    - wget https://github.com/estesp/manifest-tool/releases/download/v0.9.0/manifest-tool-linux-amd64
     - mv manifest-tool-linux-amd64 manifest-tool
     - chmod +x manifest-tool
     - ./manifest-tool push from-args --platforms linux/amd64,linux/arm,linux/arm64
