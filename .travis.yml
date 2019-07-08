@@ -3,8 +3,10 @@ language: go
 
 stages:
   - test
-  - build-push
-  - manifest
+  - name: build-push
+    if: (NOT type IN (pull_request)) AND (branch = master)
+  - name: manifest
+    if: (NOT type IN (pull_request)) AND (branch = master)
 
 cache:
   directories:
