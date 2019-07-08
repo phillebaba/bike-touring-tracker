@@ -1,38 +1,41 @@
 sudo: true
 language: go
+
 stages:
-- test
-- release
+  - test
+  - build-push
+  - manifest
+
+env:
+  matrix:
+    - ARCH=amd64
+    - ARCH=arm64
+    - ARCH=arm
 
 jobs:
   include:
-  - stage: test
-    script:
-    - go get golang.org/x/lint/golint
-    - golint
+    - stage: build-push
+      services: docker
+      script:
+        - TRAVIS_TAG="1.0.0"
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        - docker run --rm --privileged multiarch/qemu-user-static:register
+        - env GOOS=linux GOARCH=${ARCH} go build -o bike-touring-tracker-amd64 cmd/server/main.go
+        - docker build --build-arg ARCH=${ARCH} -t $DOCKER_USERNAME/bike-touring-tracker:${TRAVIS_TAG}-linux-${ARCH} .
+        - docker push $DOCKER_USERNAME/bike-touring-tracker:${TRAVIS_TAG}-linux-${ARCH}
 
-  - stage: release
-    services: docker
-    env:
-      - TRAVIS_TAG=1.0.0
-    script:
-    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-    - docker run --rm --privileged multiarch/qemu-user-static:register
+    - stage: test
+      env:
+      script:
+        - go get golang.org/x/lint/golint
+        - golint
 
-    - env GOOS=linux GOARCH=amd64 go build -o bike-touring-tracker-amd64 cmd/server/main.go
-    - env GOOS=linux GOARCH=arm64 go build -o bike-touring-tracker-arm64 cmd/server/main.go
-    - env GOOS=linux GOARCH=arm go build -o bike-touring-tracker-arm cmd/server/main.go
-
-    - docker build --build-arg ARCH=amd64 -t $DOCKER_USERNAME/bike-touring-tracker:${TRAVIS_TAG}-linux-amd64 .
-    - docker build --build-arg ARCH=arm64 -t $DOCKER_USERNAME/bike-touring-tracker:${TRAVIS_TAG}-linux-arm64 .
-    - docker build --build-arg ARCH=arm -t $DOCKER_USERNAME/bike-touring-tracker:${TRAVIS_TAG}-linux-arm .
-
-    - docker push $DOCKER_USERNAME/bike-touring-tracker:${TRAVIS_TAG}-linux-amd64
-    - docker push $DOCKER_USERNAME/bike-touring-tracker:${TRAVIS_TAG}-linux-arm64
-    - docker push $DOCKER_USERNAME/bike-touring-tracker:${TRAVIS_TAG}-linux-arm
-
-    - wget https://github.com/estesp/manifest-tool/releases/download/v0.9.0/manifest-tool-linux-amd64
-    - mv manifest-tool-linux-amd64 manifest-tool
-    - chmod +x manifest-tool
-    - ./manifest-tool push from-args --platforms linux/amd64,linux/arm,linux/arm64
-      --template "phillebaba/bike-touring-tracker:${TRAVIS_TAG}-OS-ARCH" --target "phillebaba/bike-touring-tracker:${TRAVIS_TAG}"
+    - stage: manifest
+      env:
+      script:
+        - TRAVIS_TAG="1.0.0"
+        - wget https://github.com/estesp/manifest-tool/releases/download/v0.9.0/manifest-tool-linux-amd64
+        - mv manifest-tool-linux-amd64 manifest-tool
+        - chmod +x manifest-tool
+        - ./manifest-tool push from-args --platforms linux/amd64,linux/arm,linux/arm64
+          --template "phillebaba/bike-touring-tracker:${TRAVIS_TAG}-OS-ARCH" --target "phillebaba/bike-touring-tracker:${TRAVIS_TAG}"
