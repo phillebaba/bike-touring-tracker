@@ -6,6 +6,13 @@ stages:
   - build-push
   - manifest
 
+cache:
+  directories:
+    - $GOPATH/pkg/dep
+
+before_script:
+  - IMAGE_TAG=${TRAVIS_BRANCH//\//-}
+
 jobs:
   include:
     - stage: test
@@ -20,9 +27,9 @@ jobs:
       script:
         - docker run --rm --privileged multiarch/qemu-user-static:register
         - env GOOS=linux GOARCH=${ARCH} go build -o bike-touring-tracker-${ARCH} cmd/server/main.go
-        - docker build --build-arg ARCH=${ARCH} -t $DOCKER_USERNAME/bike-touring-tracker:${TRAVIS_BRANCH}-linux-${ARCH} .
+        - docker build --build-arg ARCH=${ARCH} -t $DOCKER_USERNAME/bike-touring-tracker:${IMAGE_TAG}-linux-${ARCH} .
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-        - docker push $DOCKER_USERNAME/bike-touring-tracker:${TRAVIS_BRANCH}-linux-${ARCH}
+        - docker push $DOCKER_USERNAME/bike-touring-tracker:${IMAGE_TAG}-linux-${ARCH}
 
     - stage: build-push
       env: ARCH=arm64
@@ -30,9 +37,9 @@ jobs:
       script:
         - docker run --rm --privileged multiarch/qemu-user-static:register
         - env GOOS=linux GOARCH=${ARCH} go build -o bike-touring-tracker-${ARCH} cmd/server/main.go
-        - docker build --build-arg ARCH=${ARCH} -t $DOCKER_USERNAME/bike-touring-tracker:${TRAVIS_BRANCH}-linux-${ARCH} .
+        - docker build --build-arg ARCH=${ARCH} -t $DOCKER_USERNAME/bike-touring-tracker:${IMAGE_TAG}-linux-${ARCH} .
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-        - docker push $DOCKER_USERNAME/bike-touring-tracker:${TRAVIS_BRANCH}-linux-${ARCH}
+        - docker push $DOCKER_USERNAME/bike-touring-tracker:${IMAGE_TAG}-linux-${ARCH}
 
     - stage: build-push
       env: ARCH=arm
@@ -40,9 +47,9 @@ jobs:
       script:
         - docker run --rm --privileged multiarch/qemu-user-static:register
         - env GOOS=linux GOARCH=${ARCH} go build -o bike-touring-tracker-${ARCH} cmd/server/main.go
-        - docker build --build-arg ARCH=${ARCH} -t $DOCKER_USERNAME/bike-touring-tracker:${TRAVIS_BRANCH}-linux-${ARCH} .
+        - docker build --build-arg ARCH=${ARCH} -t $DOCKER_USERNAME/bike-touring-tracker:${IMAGE_TAG}-linux-${ARCH} .
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-        - docker push $DOCKER_USERNAME/bike-touring-tracker:${TRAVIS_BRANCH}-linux-${ARCH}
+        - docker push $DOCKER_USERNAME/bike-touring-tracker:${IMAGE_TAG}-linux-${ARCH}
 
     - stage: manifest
       env:
@@ -52,4 +59,4 @@ jobs:
         - chmod +x manifest-tool
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - ./manifest-tool push from-args --platforms linux/amd64,linux/arm,linux/arm64
-          --template "phillebaba/bike-touring-tracker:${TRAVIS_BRANCH}-OS-ARCH" --target "phillebaba/bike-touring-tracker:${TRAVIS_BRANCH}"
+          --template "phillebaba/bike-touring-tracker:${IMAGE_TAG}-OS-ARCH" --target "phillebaba/bike-touring-tracker:${IMAGE_TAG}"
