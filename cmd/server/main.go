@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 
 	"github.com/phillebaba/bike-touring-tracker/pkg/domain"
@@ -9,9 +10,16 @@ import (
 )
 
 func main() {
+	host := flag.String("postgres-host", "localhost", "host name for postgres")
+	port := flag.Int("postgres-port", 5432, "port for postgres")
+	dbname := flag.String("postgres-dbname", "postgres", "name of database")
+	user := flag.String("postgres-username", "postgres", "user for postgres")
+	password := flag.String("postgres-password", "password", "password for postgres")
+	flag.Parse()
+
 	log.Println("Starting Bike Tracker")
 
-	serviceContext := postgres.Init()
+	serviceContext := postgres.Init(*host, *port, *user, *password, *dbname)
 
 	result := serviceContext.CheckpointService.List()
 	if len(result) == 0 {

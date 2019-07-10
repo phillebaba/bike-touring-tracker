@@ -28,7 +28,7 @@ jobs:
       services: docker
       script:
         - docker run --rm --privileged multiarch/qemu-user-static:register
-        - env GOOS=linux GOARCH=${ARCH} go build -o bike-touring-tracker-${ARCH} cmd/server/main.go
+        - env CGO_ENABLED=0 GOOS=linux GOARCH=${ARCH} go build -o bike-touring-tracker-${ARCH} cmd/server/main.go
         - docker build --build-arg ARCH=${ARCH} -t $DOCKER_USERNAME/bike-touring-tracker:${IMAGE_TAG}-linux-${ARCH} .
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker push $DOCKER_USERNAME/bike-touring-tracker:${IMAGE_TAG}-linux-${ARCH}
@@ -38,7 +38,7 @@ jobs:
       services: docker
       script:
         - docker run --rm --privileged multiarch/qemu-user-static:register
-        - env GOOS=linux GOARCH=${ARCH} go build -o bike-touring-tracker-${ARCH} cmd/server/main.go
+        - env CGO_ENABLED=0 GOOS=linux GOARCH=${ARCH} go build -o bike-touring-tracker-${ARCH} cmd/server/main.go
         - docker build --build-arg ARCH=${ARCH} -t $DOCKER_USERNAME/bike-touring-tracker:${IMAGE_TAG}-linux-${ARCH} .
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker push $DOCKER_USERNAME/bike-touring-tracker:${IMAGE_TAG}-linux-${ARCH}
@@ -48,7 +48,7 @@ jobs:
       services: docker
       script:
         - docker run --rm --privileged multiarch/qemu-user-static:register
-        - env GOOS=linux GOARCH=${ARCH} go build -o bike-touring-tracker-${ARCH} cmd/server/main.go
+        - env CGO_ENABLED=0 GOOS=linux GOARCH=${ARCH} go build -o bike-touring-tracker-${ARCH} cmd/server/main.go
         - docker build --build-arg ARCH=${ARCH} -t $DOCKER_USERNAME/bike-touring-tracker:${IMAGE_TAG}-linux-${ARCH} .
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker push $DOCKER_USERNAME/bike-touring-tracker:${IMAGE_TAG}-linux-${ARCH}
