@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/jinzhu/gorm"
@@ -9,9 +10,9 @@ import (
 	"github.com/phillebaba/bike-touring-tracker/pkg/domain"
 )
 
-func Init() domain.ServiceContext {
-	// DB Connection
-	db, err := gorm.Open("postgres", "host=127.0.0.1 port=5432 user=postgres dbname=postgres password=mysecretpassword sslmode=disable")
+func Init(host string, port int, user string, password string, dbname string) domain.ServiceContext {
+	options := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	db, err := gorm.Open("postgres", options)
 
 	if err != nil {
 		log.Println(err)
