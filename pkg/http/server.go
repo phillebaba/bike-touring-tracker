@@ -5,7 +5,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
-	"github.com/thinkerou/favicon"
+	//"github.com/thinkerou/favicon"
 
 	"github.com/phillebaba/bike-touring-tracker/pkg/domain"
 )
@@ -17,7 +17,7 @@ func Run(serviceContext domain.ServiceContext) {
 	router.Use(sessions.Sessions("mysession", store))
 
 	router.Static("/static", "web/static")
-	router.Use(favicon.New("web/static/favicon.ico"))
+	//router.Use(favicon.New("web/static/favicon.ico"))
 
 	templates := multitemplate.New()
 	templates.AddFromFiles("index", "web/templates/base.html", "web/templates/index.html")
