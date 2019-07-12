@@ -1,11 +1,14 @@
 package http
 
 import (
+	"html/template"
+	"net/http"
+
 	"github.com/gin-contrib/multitemplate"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
-	//"github.com/thinkerou/favicon"
+	"github.com/gobuffalo/packr/v2"
 
 	"github.com/phillebaba/bike-touring-tracker/pkg/domain"
 )
@@ -16,15 +19,13 @@ func Run(serviceContext domain.ServiceContext) {
 	store := cookie.NewStore([]byte("secret"))
 	router.Use(sessions.Sessions("mysession", store))
 
-	router.Static("/static", "web/static")
-	//router.Use(favicon.New("web/static/favicon.ico"))
+	staticBox := packr.New("static", "../../web/static")
+	router.StaticFS("/static", http.FileSystem(staticBox))
 
-	templates := multitemplate.New()
-	templates.AddFromFiles("index", "web/templates/base.html", "web/templates/index.html")
-	templates.AddFromFiles("admin", "web/templates/base.html", "web/templates/admin.html")
-	templates.AddFromFiles("checkin", "web/templates/base.html", "web/templates/checkin.html")
-	templates.AddFromFiles("login", "web/templates/base.html", "web/templates/login.html")
-	router.HTMLRender = templates
+	//faviconBox := packr.New("favicon", "../../web/favicon")
+	//log.Println(faviconBox.Resolve("favicon.ico"))
+	//router.StaticFile("/favicon.ico", "../../web/favicon/favicon.ico")
+	router.HTMLRender = loadTemplates()
 
 	// Home
 	homeHandler := HomeHandler{serviceContext.TripService}
@@ -45,4 +46,26 @@ func Run(serviceContext domain.ServiceContext) {
 	}
 
 	router.Run()
+}
+
+func loadTemplates() multitemplate.Renderer {
+	templateBox := packr.New("template", "../../web/templates")
+	baseTemplateString, err := templateBox.FindString("base.html")
+	if err != nil {
+		panic("Could not get base.html file")
+	}
+	baseTemplate, _ := template.New("base").Parse(baseTemplateString)
+
+	renderer := multitemplate.NewRenderer()
+	for _, page := range []string{"index", "admin", "checkin", "login"} {
+		pageTemplateString, err := templateBox.FindString("index.html")
+		if err != nil {
+			panic("Could not get page file")
+		}
+
+		pageTemplate, _ := template.Must(baseTemplate.Clone()).Parse(pageTemplateString)
+		renderer.Add(page, pageTemplate)
+	}
+
+	return renderer
 }

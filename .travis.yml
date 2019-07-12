@@ -27,8 +27,9 @@ jobs:
       env: ARCH=amd64
       services: docker
       script:
+        - go get -u github.com/gobuffalo/packr/v2/packr2
         - docker run --rm --privileged multiarch/qemu-user-static:register
-        - env CGO_ENABLED=0 GOOS=linux GOARCH=${ARCH} go build -o bike-touring-tracker-${ARCH} cmd/server/main.go
+        - env CGO_ENABLED=0 GOOS=linux GOARCH=${ARCH} packr2 build -o $TRAVIS_BUILD_DIR/bike-touring-tracker-${ARCH} cmd/server/main.go
         - docker build --build-arg ARCH=${ARCH} -t $DOCKER_USERNAME/bike-touring-tracker:${IMAGE_TAG}-linux-${ARCH} .
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker push $DOCKER_USERNAME/bike-touring-tracker:${IMAGE_TAG}-linux-${ARCH}
@@ -37,8 +38,9 @@ jobs:
       env: ARCH=arm64
       services: docker
       script:
+        - go get -u github.com/gobuffalo/packr/v2/packr2
         - docker run --rm --privileged multiarch/qemu-user-static:register
-        - env CGO_ENABLED=0 GOOS=linux GOARCH=${ARCH} go build -o bike-touring-tracker-${ARCH} cmd/server/main.go
+        - env CGO_ENABLED=0 GOOS=linux GOARCH=${ARCH} packr2 build -o $TRAVIS_BUILD_DIR/bike-touring-tracker-${ARCH} cmd/server/main.go
         - docker build --build-arg ARCH=${ARCH} -t $DOCKER_USERNAME/bike-touring-tracker:${IMAGE_TAG}-linux-${ARCH} .
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker push $DOCKER_USERNAME/bike-touring-tracker:${IMAGE_TAG}-linux-${ARCH}
@@ -47,8 +49,9 @@ jobs:
       env: ARCH=arm
       services: docker
       script:
+        - go get -u github.com/gobuffalo/packr/v2/packr2
         - docker run --rm --privileged multiarch/qemu-user-static:register
-        - env CGO_ENABLED=0 GOOS=linux GOARCH=${ARCH} go build -o bike-touring-tracker-${ARCH} cmd/server/main.go
+        - env CGO_ENABLED=0 GOOS=linux GOARCH=${ARCH} packr2 build -o $TRAVIS_BUILD_DIR/bike-touring-tracker-${ARCH} cmd/server/main.go
         - docker build --build-arg ARCH=${ARCH} -t $DOCKER_USERNAME/bike-touring-tracker:${IMAGE_TAG}-linux-${ARCH} .
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker push $DOCKER_USERNAME/bike-touring-tracker:${IMAGE_TAG}-linux-${ARCH}
