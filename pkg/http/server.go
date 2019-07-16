@@ -58,7 +58,8 @@ func loadTemplates() multitemplate.Renderer {
 
 	renderer := multitemplate.NewRenderer()
 	for _, page := range []string{"index", "admin", "checkin", "login"} {
-		pageTemplateString, err := templateBox.FindString("index.html")
+		pageFilePath := page + ".html"
+		pageTemplateString, err := templateBox.FindString(pageFilePath)
 		if err != nil {
 			panic("Could not get page file")
 		}
