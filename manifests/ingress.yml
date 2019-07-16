@@ -1,0 +1,16 @@
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: btt-ingress
+  annotations:
+    kubernetes.io/ingress.class: "traefik-public"
+spec:
+  rules:
+  - host: btt.lainecloud.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: btt-service
+          servicePort: 80

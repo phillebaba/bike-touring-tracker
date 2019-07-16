@@ -17,16 +17,15 @@ spec:
     spec:
       containers:
       - name: bike-touring-tracker
-        image: phillebaba/bike-touring-tracker:test
+        image: phillebaba/bike-touring-tracker:master
         imagePullPolicy: Always
-        command: ["/app/test"]
+        command: ["/bin/bike-touring-tracker"]
         args: ["-postgres-host", "postgres.btt.svc.cluster.local"]
         env:
+        - name: GIN_MODE
+          value: "debug"
         - name: PORT
-          value: 80
-        env:
-          - name: GIN_MODE
-            value: "release"
+          value: "80"
         ports:
         - containerPort: 80
 ---
@@ -48,9 +47,30 @@ spec:
     spec:
       containers:
       - name: postgres
-        image: postgres
+        image: postgres:11.4-alpine
         env:
         - name: POSTGRES_PASSWORD
           value: "password"
         ports:
         - containerPort: 5432
+          name: postgres
+          protocol: TCP
+        volumeMounts:
+          - name: postgres-storage
+            mountPath: /var/lib/postgresql/db-data
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-pv-claim
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+
