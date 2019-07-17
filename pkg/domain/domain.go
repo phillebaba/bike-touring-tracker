@@ -24,6 +24,7 @@ type Trip struct {
 	EndTime     pq.NullTime
 	Checkpoints []Checkpoint
 	Checkins    []Checkin
+	Distance    int64
 }
 
 func (t Trip) IsFirst(checkpoint Checkpoint) bool {
@@ -61,10 +62,6 @@ func (t Trip) ActiveTimeFormatted() (string, error) {
 	return durafmt.ParseShort(duration).String(), nil
 }
 
-func (t Trip) BeeLineDistanceFormatted() string {
-	return "0 km"
-}
-
 type TripService interface {
 	List() []Trip
 	Add(trip *Trip)
@@ -89,7 +86,7 @@ func (c Checkin) TimeSinceFormatted() string {
 
 type CheckinService interface {
 	List() []Checkin
-	Delete(id int)
+	Delete(id int) error
 	Register(lat float64, lng float64, precision int, description string)
 }
 
