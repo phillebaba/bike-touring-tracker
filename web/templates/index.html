@@ -1,40 +1,53 @@
 {{ define "content" }}
 <div class="main">
-  <div id="mapid" class="map"></div>
+  <div class="sidebar text-white">
+    <div class="sidebar-header">
+      <h1 class="display-4">Pipen Cyklar Fel</h2>
+    </div>
 
-  <div class="details">
-    <h3>{{.Trip.Name}}</h3>
+    <div class="sidebar-section-header">
+      <h4><i class="fas fa-map-marked-alt"></i>&nbsp;&nbsp;Gotland Runt</h4>
+      <!--<h5><i class="fas fa-map-marked-alt"></i> {{.Trip.Name}}</h5>-->
+    </div>
 
     {{ if .Trip.Ongoing }}
-      <h4>Stats</h4>
-      <div class="card">
-        <div class="card-header">Total distance (bee line)</div>
-        <div class="card-body">
-          <p class="card-text">{{ .Trip.BeeLineDistanceFormatted }}</p>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-header">Current trip duration</div>
-        <div class="card-body">
-          <p class="card-text">{{ .Trip.ActiveTimeFormatted }}</p>
-        </div>
-      </div>
+    <div class="sidebar-section-header">
+      <h4><i class="fas fa-chart-line"></i>&nbsp;&nbsp;Stats</h4>
+    </div>
+    <div class="sidebar-content">
+      <h6>Total distance (bee line)</h6>
+      <p>{{ .Trip.Distance }} km</p>
+    </div>
+    <div class="sidebar-content">
+      <h6>Current trip duration</h6>
+      <p>{{ .Trip.ActiveTimeFormatted }}</p>
+    </div>
 
-      <h4>Checkins</h4>
-      {{range .Trip.Checkins}}
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">{{ .Name }}</h5>
-          <h6 class="card-subtitle mb-2 text-muted">{{ .TimeSinceFormatted }}</h6>
-          <p class="card-text">{{ .Description }}</p>
-        </div>
-      </div>
-      {{ end }}
-    {{ else }}
-      <h5>This trip has not been started yet<h5>
+    <div class="sidebar-section-header">
+      <h5><i class="fas fa-map-marker-alt"></i>&nbsp;&nbsp;Checkins</h5>
+    </div>
+
+    {{range .Trip.Checkins}}
+    <div class="sidebar-content">
+      <!--<h6>{{ .Name }}</h6>-->
+      <h6>Test title</h6>
+      <p>{{ .Description }}</p>
+      <p>{{ .TimeSinceFormatted }}</p>
+    </div>
     {{ end }}
+
+    {{ else }}
+    <div class="sidebar-content">
+      <h5>Trip has not been started.<h5>
+    </div>
+    {{ end }}
+
+    <div class="sidebar-bottom">
+      <p><a href="https://github.com/phillebaba/bike-touring-tracker" target="_blank">Github</a> | Hosted with ♥ on <a href="https://github.com/phillebaba/laine-cloud" target="_blank">Laine Cloud</a></p>
+    </div>
   </div>
 
+  <div class="content" id="mapid"></div>
 </div>
 
 <script>
