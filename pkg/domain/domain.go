@@ -87,7 +87,7 @@ func (c Checkin) TimeSinceFormatted() string {
 type CheckinService interface {
 	List() []Checkin
 	Delete(id int) error
-	Register(lat float64, lng float64, precision int, description string)
+	Register(name string, lat float64, lng float64, precision int, description string)
 }
 
 type CheckpointType int

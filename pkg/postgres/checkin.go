@@ -3,11 +3,12 @@ package postgres
 import (
 	"errors"
 	"log"
+	"math"
+	"time"
 
 	"github.com/golang/geo/s2"
 	"github.com/jinzhu/gorm"
-	"math"
-	"time"
+	"github.com/lib/pq"
 
 	"github.com/phillebaba/bike-touring-tracker/pkg/domain"
 )
@@ -18,13 +19,23 @@ type CheckinService struct {
 
 func (c CheckinService) List() []domain.Checkin {
 	checkins := []domain.Checkin{}
-	c.DB.Find(&checkins)
+	c.DB.Order("time").Find(&checkins)
 	return checkins
 }
 
 func (c CheckinService) Delete(id int) error {
 	var checkin domain.Checkin
 	c.DB.Preload("Trip").First(&checkin, id)
+
+	// Reset trip if last checkin
+	var count int
+	c.DB.Table("checkins").Where("trip_id = ?", checkin.Trip.ID).Count(&count)
+	log.Println(count)
+	if count == 1 {
+		c.DB.Model(&checkin.Trip).Updates(map[string]interface{}{"Distance": 0, "StartTime": pq.NullTime{}})
+		c.DB.Unscoped().Delete(&checkin)
+		return nil
+	}
 
 	// Check if checkin being delted is the first
 	var firstCheckin domain.Checkin
@@ -40,12 +51,12 @@ func (c CheckinService) Delete(id int) error {
 	totalDistance := checkin.Trip.Distance - distance
 
 	c.DB.Model(&checkin.Trip).Update("Distance", totalDistance)
-	c.DB.Delete(&checkin)
+	c.DB.Unscoped().Delete(&checkin)
 
 	return nil
 }
 
-func (c CheckinService) Register(lat float64, lng float64, precision int, description string) {
+func (c CheckinService) Register(name string, lat float64, lng float64, precision int, description string) {
 	var trip domain.Trip
 	c.DB.First(&trip)
 
@@ -73,11 +84,12 @@ func (c CheckinService) Register(lat float64, lng float64, precision int, descri
 
 	checkIn := domain.Checkin{
 		Trip:        trip,
+		Name:        name,
+		Description: description,
 		Time:        time.Now(),
 		Lat:         latLng.Lat.Degrees(),
 		Lng:         latLng.Lng.Degrees(),
 		Radius:      int(radius),
-		Description: description,
 	}
 
 	c.DB.Create(&checkIn)

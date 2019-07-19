@@ -10,6 +10,7 @@ import (
 )
 
 func main() {
+	adminPassword := flag.String("admin-password", "password", "password for admin user")
 	host := flag.String("postgres-host", "localhost", "host name for postgres")
 	port := flag.Int("postgres-port", 5432, "port for postgres")
 	dbname := flag.String("postgres-dbname", "postgres", "name of database")
@@ -26,7 +27,7 @@ func main() {
 		log.Println("Creating data")
 
 		trip := domain.Trip{
-			Name:        "Göteborg-Gotland-Göteborg",
+			Name:        "Gotland Runt",
 			Description: "Trip to Gotland, around the island and back",
 		}
 		serviceContext.TripService.Add(&trip)
@@ -40,5 +41,5 @@ func main() {
 		serviceContext.CheckpointService.Add(&domain.Checkpoint{TripID: trip.ID, Lat: 57.699514, Lng: 11.952062}) // Göteborg
 	}
 
-	http.Run(serviceContext)
+	http.Run(*adminPassword, serviceContext)
 }

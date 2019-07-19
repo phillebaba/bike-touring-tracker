@@ -2,45 +2,54 @@
 <div class="main">
   <div class="sidebar text-white">
     <div class="sidebar-header">
-      <h1 class="display-4">Pipen Cyklar Fel</h2>
+      <h1 class="display-4">Pipen Cyklar Fel</h1>
+      <button type="button" onClick="hamburgerPushed();"><h1><i class="fas fa-bars"></i></h1></button>
     </div>
 
-    <div class="sidebar-section-header">
-      <h4><i class="fas fa-map-marked-alt"></i>&nbsp;&nbsp;Gotland Runt</h4>
-      <!--<h5><i class="fas fa-map-marked-alt"></i> {{.Trip.Name}}</h5>-->
-    </div>
+    <div class="sidebar-scroll-container" id="sidebar-scroll-container">
+      <div class="sidebar-content">
+        <h2 style="marging-right: 5px;"><i class="fas fa-map-signs"></i></h2>
+        <div style="margin-left: 15px;">
+          <h2>{{ .Trip.Name }}</h2>
+          <p>Trip name</p>
+        </div>
+      </div>
 
-    {{ if .Trip.Ongoing }}
-    <div class="sidebar-section-header">
-      <h4><i class="fas fa-chart-line"></i>&nbsp;&nbsp;Stats</h4>
-    </div>
-    <div class="sidebar-content">
-      <h6>Total distance (bee line)</h6>
-      <p>{{ .Trip.Distance }} km</p>
-    </div>
-    <div class="sidebar-content">
-      <h6>Current trip duration</h6>
-      <p>{{ .Trip.ActiveTimeFormatted }}</p>
-    </div>
+      {{ if .Trip.Ongoing }}
+      <div class="sidebar-content">
+        <h2><i class="fas fa-ruler"></i></h2>
+        <div style="margin-left: 15px;">
+          <h2>{{ .Trip.Distance }} km</h2>
+          <p>Total distance (bee line)</p>
+        </div>
+      </div>
 
-    <div class="sidebar-section-header">
-      <h5><i class="fas fa-map-marker-alt"></i>&nbsp;&nbsp;Checkins</h5>
-    </div>
+      <div class="sidebar-content">
+        <h2><i class="fas fa-stopwatch"></i></h2>
+        <div style="margin-left: 15px;">
+          <h2>{{ .Trip.ActiveTimeFormatted }}</h2>
+          <p>Trip duration</p>
+        </div>
+      </div>
 
-    {{range .Trip.Checkins}}
-    <div class="sidebar-content">
-      <!--<h6>{{ .Name }}</h6>-->
-      <h6>Test title</h6>
-      <p>{{ .Description }}</p>
-      <p>{{ .TimeSinceFormatted }}</p>
-    </div>
-    {{ end }}
+      <div class="sidebar-section-header">
+        <h3><i class="fas fa-map-marker-alt"></i>&nbsp;&nbsp;Checkins</h3>
+      </div>
 
-    {{ else }}
-    <div class="sidebar-content">
-      <h5>Trip has not been started.<h5>
+      {{range .Trip.Checkins}}
+      <div class="checkin-content">
+        <h5>{{ .Name }}</h5>
+        <p>{{ .Description }}</p>
+        <p>{{ .TimeSinceFormatted }}</p>
+      </div>
+      {{ end }}
+
+      {{ else }}
+      <div class="sidebar-content">
+        <h5>Trip has not been started.</h5>
+      </div>
+      {{ end }}
     </div>
-    {{ end }}
 
     <div class="sidebar-bottom">
       <p><a href="https://github.com/phillebaba/bike-touring-tracker" target="_blank">Github</a> | Hosted with ♥ on <a href="https://github.com/phillebaba/laine-cloud" target="_blank">Laine Cloud</a></p>
@@ -51,16 +60,22 @@
 </div>
 
 <script>
-  var map = L.map('mapid').setView([57.609581, 14.243360], 8);
+  {{if .Trip.Ongoing}}
+    var map = L.map('mapid').setView([{{(index .Trip.Checkins 0).Lat}}, {{(index .Trip.Checkins 0).Lng}}], 11);
+  {{else}}
+    var map = L.map('mapid').setView([{{(index .Trip.Checkpoints 0).Lat}}, {{(index .Trip.Checkpoints 0).Lng}}], 11);
+  {{end}}
 
-  L.tileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png', {
+  map.zoomControl.remove();
+
+  L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
     maxZoom: 18,
   }).addTo(map);
 
   {{range .Trip.Checkins}}
     L.circle([{{.Lat}}, {{.Lng}}], {
-        color: 'red',
-        fillColor: '#f03',
+        color: '#88bbd6',
+        fillColor: '#99d3df',
         fillOpacity: 0.5,
       radius: {{ .Radius }}
     }).addTo(map);
@@ -93,5 +108,13 @@
       L.marker([{{.Lat}}, {{.Lng}}], {icon: yellowIcon}).addTo(map);
     {{ end }}
   {{end}}
+
+
+  <!-- Mobile Menu -->
+  function hamburgerPushed() {
+    var element = document.getElementById("sidebar-scroll-container")
+    console.log("update")
+    element.classList.toggle("sidebar-scroll-container")
+  }
 </script>
 {{ end }}

@@ -13,8 +13,9 @@ import (
 	"github.com/phillebaba/bike-touring-tracker/pkg/domain"
 )
 
-func Run(serviceContext domain.ServiceContext) {
+func Run(adminPassword string, serviceContext domain.ServiceContext) {
 	router := gin.Default()
+	router.HTMLRender = loadTemplates()
 
 	store := cookie.NewStore([]byte("secret"))
 	router.Use(sessions.Sessions("mysession", store))
@@ -22,17 +23,16 @@ func Run(serviceContext domain.ServiceContext) {
 	staticBox := packr.New("static", "../../web/static")
 	router.StaticFS("/static", http.FileSystem(staticBox))
 
-	//faviconBox := packr.New("favicon", "../../web/favicon")
-	//log.Println(faviconBox.Resolve("favicon.ico"))
-	//router.StaticFile("/favicon.ico", "../../web/favicon/favicon.ico")
-	router.HTMLRender = loadTemplates()
+	faviconBox := packr.New("favicon", "../../web/favicon")
+	file, _ := faviconBox.Find("favicon.ico")
+	router.Use(FaviconMiddleware(file))
 
 	// Home
 	homeHandler := HomeHandler{serviceContext.TripService}
 	router.GET("/", homeHandler.Index)
 
 	// Admin
-	adminHandler := AdminHandler{serviceContext.CheckinService}
+	adminHandler := AdminHandler{adminPassword, serviceContext.CheckinService}
 	adminRoutes := router.Group("/admin")
 	{
 		adminRoutes.GET("/", EnsureAuthenticated(), adminHandler.Index)

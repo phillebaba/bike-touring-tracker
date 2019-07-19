@@ -13,6 +13,7 @@ import (
 )
 
 type AdminHandler struct {
+	adminPassword  string
 	CheckinService domain.CheckinService
 }
 
@@ -28,12 +29,13 @@ func (h *AdminHandler) Checkin(c *gin.Context) {
 }
 
 func (h *AdminHandler) SubmitCheckin(c *gin.Context) {
+	name := c.PostForm("name")
 	lat, _ := strconv.ParseFloat(c.PostForm("lat"), 64)
 	lng, _ := strconv.ParseFloat(c.PostForm("lng"), 64)
 	precision, _ := strconv.ParseInt(c.PostForm("precision"), 10, 32)
 	description := c.PostForm("description")
 
-	h.CheckinService.Register(lat, lng, int(precision), description)
+	h.CheckinService.Register(name, lat, lng, int(precision), description)
 
 	c.Redirect(http.StatusMovedPermanently, "/admin")
 	c.Abort()
@@ -61,7 +63,7 @@ func (h *AdminHandler) Login(c *gin.Context) {
 		return
 	}
 
-	if username == "admin" && password == "password" {
+	if username == "admin" && password == h.adminPassword {
 		session.Set("user", username) //In real world usage you'd set this to the users ID
 		err := session.Save()
 		if err != nil {
