@@ -65,6 +65,7 @@ p {
   margin: 0;
   background: transparent;
   color: white;
+  display: none;
 }
 
 .sidebar-scroll-container {
@@ -123,8 +124,17 @@ p {
     height: 64px;
   }
 
+  .sidebar-header button {
+    display: inherit;
+  }
+
   .sidebar-scroll-container {
     height: 0px;
+  }
+
+  .sidebar-scroll-container-expanded {
+    height: calc(100vh - 64px) !important;
+    overflow-y: auto;
   }
 
   .sidebar-bottom {
