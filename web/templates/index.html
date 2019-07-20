@@ -74,8 +74,8 @@
 
   {{range .Trip.Checkins}}
     L.circle([{{.Lat}}, {{.Lng}}], {
-        color: '#88bbd6',
-        fillColor: '#99d3df',
+        color: '#efc545',
+        fillColor: '#efc545',
         fillOpacity: 0.5,
       radius: {{ .Radius }}
     }).addTo(map);
@@ -88,7 +88,7 @@
   });
 
   var yellowIcon = L.icon({
-        iconUrl: 'static/assets/flag-yellow.png',
+        iconUrl: 'static/assets/flag-blue.png',
         iconSize:     [32, 32], // size of the icon
         iconAnchor:   [0, 32], // point of the icon which will correspond to marker's location
   });
