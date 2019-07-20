@@ -53,7 +53,7 @@
 
       function reverseGeocode(lat, lng) {
         const Http = new XMLHttpRequest();
-        const url='https://nominatim.openstreetmap.org/reverse?lat=57.693521&lon=11.923022&format=json';
+        const url="https://nominatim.openstreetmap.org/reverse?format=json&lat=" + lat + "&lon=" + lng;
         Http.open("GET", url);
         Http.send();
 
