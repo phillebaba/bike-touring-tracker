@@ -32,12 +32,12 @@ func main() {
 		}
 		serviceContext.TripService.Add(&trip)
 
-		serviceContext.CheckpointService.Add(&domain.Checkpoint{TripID: trip.ID, Lat: 57.674778, Lng: 11.931406}) // Skäpplandsgatan
-		serviceContext.CheckpointService.Add(&domain.Checkpoint{TripID: trip.ID, Lat: 57.758292, Lng: 16.636712}) // Västervik
-		serviceContext.CheckpointService.Add(&domain.Checkpoint{TripID: trip.ID, Lat: 57.635028, Lng: 18.286178}) // Visby
-		serviceContext.CheckpointService.Add(&domain.Checkpoint{TripID: trip.ID, Lat: 57.716103, Lng: 18.793730}) // Slite
-		serviceContext.CheckpointService.Add(&domain.Checkpoint{TripID: trip.ID, Lat: 57.631040, Lng: 18.277280}) // Visby
+		serviceContext.CheckpointService.Add(&domain.Checkpoint{TripID: trip.ID, Lat: 57.681960, Lng: 11.946025}) // Skäpplandsgatan
 		serviceContext.CheckpointService.Add(&domain.Checkpoint{TripID: trip.ID, Lat: 57.263863, Lng: 16.456182}) // Oskarshamn
+		serviceContext.CheckpointService.Add(&domain.Checkpoint{TripID: trip.ID, Lat: 57.635028, Lng: 18.286178}) // Visby
+		serviceContext.CheckpointService.Add(&domain.Checkpoint{TripID: trip.ID, Lat: 57.974794, Lng: 19.322754}) // Fårö
+		serviceContext.CheckpointService.Add(&domain.Checkpoint{TripID: trip.ID, Lat: 57.421742, Lng: 18.910230}) // Herrvik
+		serviceContext.CheckpointService.Add(&domain.Checkpoint{TripID: trip.ID, Lat: 56.922863, Lng: 18.132187}) // Hoborg
 		serviceContext.CheckpointService.Add(&domain.Checkpoint{TripID: trip.ID, Lat: 57.699514, Lng: 11.952062}) // Göteborg
 	}
 
