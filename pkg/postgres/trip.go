@@ -12,7 +12,7 @@ type TripService struct {
 
 func (c TripService) List() []domain.Trip {
 	trips := []domain.Trip{}
-	c.DB.Preload("Checkins").Preload("Checkpoints").Find(&trips)
+	c.DB.Preload("Checkpoints").Preload("Checkins").Find(&trips)
 	return trips
 }
 

@@ -27,12 +27,20 @@ type Trip struct {
 	Distance    int64
 }
 
-func (t Trip) IsFirst(checkpoint Checkpoint) bool {
-	return checkpoint == t.Checkpoints[0]
+func (t Trip) IsFirstCheckpoint(checkpoint Checkpoint) bool {
+	return checkpoint.ID == t.Checkpoints[0].ID
 }
 
-func (t Trip) IsLast(checkpoint Checkpoint) bool {
-	return checkpoint == t.Checkpoints[len(t.Checkpoints)-1]
+func (t Trip) IsLastCheckpoint(checkpoint Checkpoint) bool {
+	return checkpoint.ID == t.Checkpoints[len(t.Checkpoints)-1].ID
+}
+
+func (t Trip) LatestCheckin() Checkin {
+	return t.Checkins[len(t.Checkins)-1]
+}
+
+func (t Trip) IsLastCheckin(checkin Checkin) bool {
+	return checkin.ID == t.Checkins[len(t.Checkins)-1].ID
 }
 
 func (t Trip) Ongoing() bool {

@@ -61,7 +61,7 @@
 
 <script>
   {{if .Trip.Ongoing}}
-    var map = L.map('mapid').setView([{{(index .Trip.Checkins 0).Lat}}, {{(index .Trip.Checkins 0).Lng}}], 11);
+    var map = L.map('mapid').setView([{{ .Trip.LatestCheckin.Lat }}, {{ .Trip.LatestCheckin.Lng }}], 11);
   {{else}}
     var map = L.map('mapid').setView([{{(index .Trip.Checkpoints 0).Lat}}, {{(index .Trip.Checkpoints 0).Lng}}], 11);
   {{end}}
@@ -72,13 +72,23 @@
     maxZoom: 18,
   }).addTo(map);
 
+  var bikeIcon = L.icon({
+        iconUrl: 'static/assets/bike.png',
+        iconSize:     [32, 32], // size of the icon
+        iconAnchor:   [16, 16], // point of the icon which will correspond to marker's location
+  });
+
   {{range .Trip.Checkins}}
-    L.circle([{{.Lat}}, {{.Lng}}], {
-        color: '#efc545',
-        fillColor: '#efc545',
-        fillOpacity: 0.5,
-      radius: {{ .Radius }}
-    }).addTo(map);
+    {{ if $.Trip.IsLastCheckin . }}
+      L.marker([{{.Lat}}, {{.Lng}}], {icon: bikeIcon}).addTo(map);
+    {{ else }}
+      L.circle([{{.Lat}}, {{.Lng}}], {
+          color: '#efc545',
+          fillColor: '#efc545',
+          fillOpacity: 0.5,
+        radius: {{ .Radius }}
+      }).addTo(map);
+    {{ end }}
   {{end}}
 
   var greenIcon = L.icon({
@@ -100,9 +110,9 @@
   });
 
   {{range .Trip.Checkpoints}}
-    {{ if $.Trip.IsFirst . }}
+    {{ if $.Trip.IsFirstCheckpoint . }}
       L.marker([{{.Lat}}, {{.Lng}}], {icon: greenIcon}).addTo(map);
-    {{ else if $.Trip.IsLast . }}
+    {{ else if $.Trip.IsLastCheckpoint . }}
       L.marker([{{.Lat}}, {{.Lng}}], {icon: redIcon}).addTo(map);
     {{ else }}
       L.marker([{{.Lat}}, {{.Lng}}], {icon: yellowIcon}).addTo(map);

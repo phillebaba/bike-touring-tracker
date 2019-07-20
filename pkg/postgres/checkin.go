@@ -19,7 +19,7 @@ type CheckinService struct {
 
 func (c CheckinService) List() []domain.Checkin {
 	checkins := []domain.Checkin{}
-	c.DB.Order("time").Find(&checkins)
+	c.DB.Find(&checkins)
 	return checkins
 }
 
@@ -30,7 +30,6 @@ func (c CheckinService) Delete(id int) error {
 	// Reset trip if last checkin
 	var count int
 	c.DB.Table("checkins").Where("trip_id = ?", checkin.Trip.ID).Count(&count)
-	log.Println(count)
 	if count == 1 {
 		c.DB.Model(&checkin.Trip).Updates(map[string]interface{}{"Distance": 0, "StartTime": pq.NullTime{}})
 		c.DB.Unscoped().Delete(&checkin)
