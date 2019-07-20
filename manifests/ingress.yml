@@ -5,7 +5,11 @@ metadata:
   name: btt-ingress
   annotations:
     kubernetes.io/ingress.class: "traefik-public"
+    traefik.ingress.kubernetes.io/redirect-entry-point: https
 spec:
+  tls:
+  - hosts:
+    - pipencyklarfel.com
   rules:
   - host: pipencyklarfel.com
     http:
