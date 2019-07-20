@@ -1,4 +1,5 @@
 resources:
+  - secret.yml
   - service.yml
   - deployment.yml
   - ingress.yml

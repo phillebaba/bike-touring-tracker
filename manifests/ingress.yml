@@ -7,7 +7,7 @@ metadata:
     kubernetes.io/ingress.class: "traefik-public"
 spec:
   rules:
-  - host: btt.lainecloud.com
+  - host: pipencyklarfel.com
     http:
       paths:
       - path: /
