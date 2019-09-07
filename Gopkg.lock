@@ -332,6 +332,7 @@
     "github.com/gin-contrib/sessions/cookie",
     "github.com/gin-gonic/gin",
     "github.com/gobuffalo/packr/v2",
+    "github.com/gobuffalo/packr/v2/file/resolver",
     "github.com/golang/geo/s2",
     "github.com/hako/durafmt",
     "github.com/jinzhu/gorm",
